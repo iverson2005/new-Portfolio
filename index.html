@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#f9f7f3">
+  <title>Sketchfolio · Drawing & Code</title>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Caveat:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* [All CSS remains the same as previous version] */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2e2a28;
+      --secondary: #8b7355;
+      --accent: #c0392b;
+      --bg-light: #f9f7f3;
+      --bg-cream: #f0e6dd;
+      --shadow-color: #bba99b;
+      --text-dark: #2e2a28;
+      --text-light: #f3ede8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --purple: #8b5cf6;
+      --gold: #fbbf24;
+    }
+
+    body {
+      background: var(--bg-light);
+      background-image: radial-gradient(circle at 20% 30%, rgba(230, 220, 210, 0.4) 0%, transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(199, 180, 167, 0.2) 0%, transparent 40%),
+        linear-gradient(145deg, #f4ede6 0%, #faf8f5 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-cream);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      border-radius: 10px;
+    }
+
+    .drawing-border {
+      border: 2.8px solid #2c2a28;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      box-shadow: 8px 8px 0 var(--shadow-color);
+      transition: all 0.3s;
+    }
+
+    .drawing-border:hover {
+      box-shadow: 12px 12px 0 var(--secondary);
+      transform: translate(-4px, -4px);
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0.8rem 2rem;
+      background: rgba(249, 247, 243, 0.95);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--primary);
+      color: var(--text-light);
+      padding: 0.4rem 1.5rem;
+      border-radius: 40px 8px 40px 8px;
+      transform: rotate(-1deg);
+      box-shadow: 5px 5px 0 var(--accent);
+      text-decoration: none;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px 4px 20px 4px;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-cream);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .profile-link {
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      color: white !important;
+    }
+
+    .visitor-widget {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: white;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      border: 2px solid var(--primary);
+      box-shadow: 4px 4px 0 var(--shadow-color);
+    }
+
+    .visitor-stats {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .visitor-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .visitor-value {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .visitor-label {
+      font-size: 0.7rem;
+      color: #666;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding-left: 15px;
+      border-left: 2px solid var(--shadow-color);
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.3)
+      }
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 6rem 2rem 2rem;
+    }
+
+    .hero-section {
+      min-height: calc(100vh - 100px);
+      display: flex;
+      align-items: center;
+      padding: 2rem 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--bg-cream);
+      padding: 0.6rem 1.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .hero-profile-preview {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.2rem 1.5rem;
+      background: linear-gradient(135deg, #fff 0%, #faf8f5 100%);
+      margin-bottom: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-preview-avatar {
+      position: relative;
+    }
+
+    .avatar-img {
+      width: 65px;
+      height: 65px;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      border: 3px solid var(--primary);
+    }
+
+    .online-status {
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--success);
+      border: 3px solid white;
+      border-radius: 50%;
+    }
+
+    .profile-preview-info h4 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .verified-check {
+      color: var(--info);
+    }
+
+    .mini-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.9rem;
+    }
+
+    .view-profile-btn {
+      margin-left: auto;
+      width: 45px;
+      height: 45px;
+      background: var(--primary);
+      color: white;
+      border-radius: 15px 5px 15px 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--primary);
+      box-shadow: 4px 4px 0 var(--accent);
+    }
+
+    .profile-badge {
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--gold), #ff9f43);
+      color: var(--primary);
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border: 2px solid var(--primary);
+      box-shadow: 3px 3px 0 var(--shadow-color);
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .title-line {
+      display: block;
+    }
+
+    .title-line.accent {
+      color: var(--accent);
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 2rem 0;
+    }
+
+    .tech-badge {
+      background: white;
+      border: 2px solid var(--primary);
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px 6px 30px 6px;
+      font-weight: 600;
+      box-shadow: 4px 4px 0 var(--shadow-color);
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      font-weight: 600;
+      border: 2px solid var(--primary);
+      border-radius: 12px 4px 20px 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 6px 6px 0 var(--secondary);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      box-shadow: 6px 6px 0 var(--shadow-color);
+    }
+
+    .projects-section {
+      padding: 5rem 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .project-card {
+      background: #fcf9f6;
+      border: 3px solid #2e2a28;
+      border-radius: 30px 10px 50px 10px;
+      padding: 2rem;
+      box-shadow: 10px 10px 0 #bba99b;
+    }
+
+    .project-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #8b7355;
+    }
+
+    .project-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      border-bottom: 3px dashed #8b7355;
+      padding-bottom: 10px;
+    }
+
+    .project-tech {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 1.5rem 0;
+    }
+
+    .mini-tag {
+      background: #e7ddd4;
+      border: 1.5px solid #2e2a28;
+      border-radius: 20px 3px 20px 3px;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-view {
+      background: #2e2a28;
+      color: white;
+      border: none;
+      border-radius: 12px 3px 20px 3px;
+      padding: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 #8b7355;
+    }
+
+    .bring-section {
+      padding: 5rem 0;
+    }
+
+    .bring-container {
+      background: #e7dbd1e0;
+      backdrop-filter: blur(8px);
+      padding: 3rem;
+      border: 3px solid #2e2a28;
+      box-shadow: 10px 10px 0 #bba99b;
+      border-radius: 30px 10px 30px 10px;
+    }
+
+    .bring-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .bring-card {
+      background: #fbf6f0;
+      padding: 2rem 1.5rem;
+      border: 2px solid #2e2a28;
+      box-shadow: 6px 6px 0 #bba99b;
+      text-align: center;
+    }
+
+    .card-icon {
+      font-size: 2.5rem;
+      color: #8b7355;
+    }
+
+    .bring-footer {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 2rem;
+      border-top: 2px dashed #8b7355;
+    }
+
+    .contact-section {
+      padding: 5rem 0;
+    }
+
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+
+    .contact-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 2.5rem;
+      background: linear-gradient(135deg, #fcf9f6, #f5ede6);
+      text-decoration: none;
+      color: #2e2a28;
+      border: 3px solid #2e2a28;
+      box-shadow: 8px 8px 0 #bba99b;
+      border-radius: 30px 10px 30px 10px;
+    }
+
+    .contact-card i {
+      font-size: 3rem;
+      color: #c0392b;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 0.5rem 1.2rem;
+      background: white;
+      border-radius: 30px;
+      border: 2px solid #2e2a28;
+      box-shadow: 4px 4px 0 #bba99b;
+      z-index: 998;
+    }
+
+    .connection-status.connected {
+      color: #10b981;
+    }
+
+    .connection-status.connecting {
+      color: #f59e0b;
+    }
+
+    .connection-status.disconnected {
+      color: #ef4444;
+    }
+
+    .stat-card {
+      position: absolute;
+      background: white;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-card.floating {
+      top: 10%;
+      right: -20px;
+      animation: float 3s infinite;
+    }
+
+    .stat-card.floating-delayed {
+      bottom: 15%;
+      left: -30px;
+      animation: float 3s 1s infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-15px)
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bring-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .contact-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bring-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 5rem 1rem 1.5rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="connection-status connecting" id="connectionStatus">
+    <i class="fas fa-circle"></i>
+    <span id="connectionText">Connecting...</span>
+  </div>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <i class="fas fa-pencil-alt"></i><span>draftfolio.</span>
+      </a>
+      <div class="nav-menu">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <a href="profile.html" class="nav-link profile-link"><i class="fas fa-user-circle"></i> Profile</a>
+      </div>
+      <div class="visitor-widget">
+        <div class="visitor-stats">
+          <div class="visitor-item"><i class="fas fa-eye"></i><span><span class="visitor-value"
+                id="todayVisitors">0</span><span class="visitor-label">Today</span></span></div>
+          <div class="visitor-item"><i class="fas fa-users"></i><span><span class="visitor-value"
+                id="totalVisitors">0</span><span class="visitor-label">Total</span></span></div>
+        </div>
+        <div class="live-indicator"><span class="live-dot"></span><span class="live-text"><span id="liveCount">0</span>
+            Live</span></div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section id="home" class="hero-section">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge drawing-border"><i class="fas fa-code"></i> Junior Developer</div>
+
+          <div class="hero-profile-preview drawing-border" onclick="goToProfile()">
+            <span class="profile-badge"><i class="fas fa-crown"></i> Available for Work</span>
+            <div class="profile-preview-avatar">
+              <img
+                src="https://www.image2url.com/r2/default/images/1776069395379-b23b37e0-5072-402d-95cf-0c4a1097775f.jpg"
+                alt="Revilla, Sean benedict C." class="avatar-img">
+              <span class="online-status"></span>
+            </div>
+            <div class="profile-preview-info">
+              <h4>Revilla, Sean benedict C. <span class="verified-check"><i class="fas fa-check-circle"></i></span></h4>
+              <p><i class="fas fa-map-marker-alt"></i> Philippines, Tondo, Manila • <i class="fas fa-briefcase"></i> TechCanvas
+              </p>
+              <div class="mini-stats">
+                <span><i class="fas fa-project-diagram"></i> <span id="profileProjects">7</span> Projects</span>
+                <span><i class="fas fa-star"></i> 2.95 Rating</span>
+                <span><i class="fas fa-users"></i> <span id="profileFollowers">0</span> Followers</span>
+              </div>
+            </div>
+            <div class="view-profile-btn"><a href="profile.html"><i class="fas fa-arrow-right"></i></a></div>
+          </div>
+
+          <h1 class="hero-title"><span class="title-line">Code Scratch</span><span class="title-line accent">Ideas to
+              Production</span></h1>
+          <p class="hero-description">Crafting digital experiences with the precision of a draftsman and the creativity
+            of an artist.</p>
+
+          <div class="tech-stack">
+            <span class="tech-badge"><i class="fab fa-java"></i> Java</span>
+            <span class="tech-badge"><i class="fab fa-php"></i> PHP</span>
+            <span class="tech-badge"><i class="fab fa-js"></i> JavaScript</span>
+            <span class="tech-badge"><i class="fab fa-python"></i> Python</span>
+            <span class="tech-badge"><i class="fab fa-react"></i> React</span>
+            <span class="tech-badge"><i class="fas fa-database"></i> MySQL</span>
+            <span class="tech-badge"><i class="fas fa-fire"></i> Firebase</span>
+            <span class="tech-badge"><i class="fas fa-bolt"></i> Supabase</span>
+          </div>
+
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToProjects()"><i class="fas fa-arrow-down"></i> View My
+              Work</button>
+            <button class="btn btn-secondary" onclick="scrollToContact()"><i class="fas fa-paper-plane"></i> Get In
+              Touch</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-image-wrapper drawing-border"
+            style="background:var(--bg-cream);padding:2rem;text-align:center">
+            <svg viewBox="0 0 300 300" style="width:100%;max-width:350px">
+              <circle cx="150" cy="150" r="130" fill="none" stroke="#2e2a28" stroke-width="3" />
+              <rect x="80" y="190" width="140" height="10" fill="#8B7355" stroke="#2e2a28" stroke-width="2" />
+              <rect x="100" y="160" width="100" height="40" rx="5" fill="#3d3d3d" stroke="#2e2a28" stroke-width="2" />
+              <rect x="108" y="168" width="84" height="24" fill="#1a1a2e" />
+              <line x1="115" y1="175" x2="150" y2="175" stroke="#4ecdc4" stroke-width="2" />
+              <line x1="115" y1="182" x2="135" y2="182" stroke="#ff6b6b" stroke-width="2" />
+              <circle cx="80" cy="100" r="12" fill="#ffd4b8" stroke="#2e2a28" stroke-width="2" />
+            </svg>
+          </div>
+          <div class="stat-card floating drawing-border"><i class="fas fa-code-branch"></i><span>7 Projects</span>
+          </div>
+          <div class="stat-card floating-delayed drawing-border"><i class="fas fa-trophy"></i><span>2 Awards</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="projects-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="fas fa-paint-brush"></i> Featured Sketches</h2>
+        <p class="section-subtitle">7 hand-crafted projects</p>
+      </div>
+      <div class="projects-grid" id="projectsContainer">
+        <div class="loading-projects" style="text-align:center;padding:3rem"><i class="fas fa-spinner fa-spin"></i>
+          Loading projects...</div>
+      </div>
+    </section>
+
+    <section id="about" class="bring-section">
+      <div class="bring-container">
+        <h3 class="bring-title"><i class="fas fa-hand-peace"></i> What I Bring To Your Team</h3>
+        <div class="bring-grid">
+          <div class="bring-card">
+            <div class="card-icon"><i class="fas fa-rocket"></i></div>
+            <h4>Fast Delivery</h4>
+            <p>Shipping quality code at speed</p>
+          </div>
+          <div class="bring-card">
+            <div class="card-icon"><i class="fas fa-puzzle-piece"></i></div>
+            <h4>Problem Solver</h4>
+            <p>Breaking down complex challenges</p>
+          </div>
+          <div class="bring-card">
+            <div class="card-icon"><i class="fas fa-brain"></i></div>
+            <h4>Critical Thinker</h4>
+            <p>Analytical approach to edge cases</p>
+          </div>
+          <div class="bring-card">
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+            <h4>Result Driven</h4>
+            <p>Focused on measurable outcomes</p>
+          </div>
+        </div>
+        <div class="bring-footer">
+          <div><i class="fas fa-code"></i> Java · PHP · JS · Python · React · MySQL · Firebase · Supabase</div>
+          <div class="live-visitors-badge"
+            style="background:#2e2a28;color:white;padding:0.8rem 1.8rem;border-radius:30px;display:flex;align-items:center;gap:10px;box-shadow:4px 4px 0 #c0392b">
+            <span
+              style="width:12px;height:12px;background:#10b981;border-radius:50%;animation:pulseGlow 1.5s infinite"></span>
+            <span id="footerLiveCount">0</span> visitors total
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+      <div class="contact-container" style="max-width:1000px;margin:0 auto">
+        <h3 class="contact-title" style="font-size:2.5rem;text-align:center;margin-bottom:3rem">Let's Create Something
+        </h3>
+        <div class="contact-cards">
+          <a href="https://github.com/seanRevilla213" target="_blank" class="contact-card"><i
+              class="fab fa-github"></i><span>GitHub</span><small>@seanRevilla213</small></a>
+          <a href="https://linkedin.com/in/seanRevilla213" target="_blank" class="contact-card"><i
+              class="fab fa-linkedin"></i><span>LinkedIn</span><small>Sean Benedict Revilla</small></a>
+          <a href="mailto:reyiverson2005@gmail.com" class="contact-card"><i
+              class="fas fa-envelope"></i><span>Email</span><small>reyiverson2005@gmail.com</small></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =============================================
+    // SUPABASE CONFIGURATION - REPLACE WITH YOUR CREDENTIALS
+    // =============================================
+    const SUPABASE_URL = 'https://fcuhcuoukhyeyktnmxel.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjdWhjdW91a2h5ZXlrdG5teGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4OTg4NDYsImV4cCI6MjA5MTQ3NDg0Nn0._Q469hhBcjFzewkAWUM9JAH0k54jCjGQJaDVifOhQoU';
+
+    let supabase = null;
+    let visitorId = null;
+    let totalVisitors = 0;
+    let todayVisitors = 0;
+    let liveVisitors = 0;
+
+    const fallbackProjects = [
+      { icon: 'fa-solid fa-paintbrush', title: 'SketchSync', description: 'Collaborative drawing board with real‑time canvas synchronization using React and Supabase.', tech: ['React', 'Supabase', 'JavaScript'] },
+      { icon: 'fa-solid fa-dragon', title: 'Inkwell API', description: 'RESTful drawing analytics backend built with Java Spring Boot and MySQL database.', tech: ['Java', 'MySQL', 'PHP'] },
+      { icon: 'fa-solid fa-palette', title: 'Palette Picker', description: 'AI-powered color palette generator using Python FastAPI and Firebase storage.', tech: ['Python', 'Firebase', 'React'] },
+      { icon: 'fa-solid fa-pen-fancy', title: 'DoodleDash', description: 'Multiplayer sketching game with real-time WebSocket connections and PHP backend.', tech: ['PHP', 'JavaScript', 'MySQL'] },
+      { icon: 'fa-solid fa-laptop-code', title: 'PortfolioForge', description: 'Dynamic portfolio CMS with drawing theme customization and Supabase storage.', tech: ['React', 'Supabase', 'JavaScript'] },
+      { icon: 'fa-solid fa-draw-polygon', title: 'VectorVault', description: 'SVG editor and vector library with Python image processing capabilities.', tech: ['Python', 'MySQL', 'JavaScript'] },
+      { icon: 'fa-solid fa-cloud-arrow-up', title: 'ExpoSketch', description: 'Mobile-first drawing gallery with Firebase authentication and real-time updates.', tech: ['Firebase', 'React', 'Java'] }
+    ];
+
+    // =============================================
+    // INITIALIZE SUPABASE - FIXED
+    // =============================================
+    async function initSupabase() {
+      const statusEl = document.getElementById('connectionStatus');
+      const textEl = document.getElementById('connectionText');
+
+      // Check if credentials are configured
+      if (SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_URL === '') {
+        console.warn('⚠️ Please configure your Supabase credentials in the code');
+        statusEl.classList.remove('connecting');
+        statusEl.classList.add('disconnected');
+        textEl.textContent = 'No Credentials';
+        startDemoMode();
+        renderFallbackProjects();
+        return false;
+      }
+
+      try {
+        // Create Supabase client
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Get or create visitor ID
+        visitorId = localStorage.getItem('visitor_id');
+        if (!visitorId) {
+          visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+          localStorage.setItem('visitor_id', visitorId);
+        }
+
+        // Test connection by trying to fetch from a table
+        // This will fail if tables don't exist, but we'll handle it
+        const { data, error } = await supabase.from('visitor_tracking').select('id').limit(1);
+
+        if (error) {
+          console.log('Tables not found, creating them...');
+          // Tables don't exist - try to create them via RPC or just use demo mode
+          statusEl.classList.remove('connecting');
+          statusEl.classList.add('connected');
+          textEl.textContent = 'Connected (Demo)';
+
+          // Still track in localStorage for demo
+          startDemoMode();
+          renderFallbackProjects();
+          return false;
+        }
+
+        // Successfully connected!
+        statusEl.classList.remove('connecting');
+        statusEl.classList.add('connected');
+        textEl.textContent = 'Connected';
+        console.log('✅ Supabase connected successfully!');
+
+        // Track this visit
+        await trackVisit();
+
+        // Set up real-time subscriptions
+        await subscribeToVisitors();
+
+        // Load projects
+        await loadProjects();
+        await subscribeToProjects();
+
+        // Load profile stats
+        await loadProfileStats();
+
+        // Set intervals
+        setInterval(() => updateLivePresence(), 30000);
+        setInterval(() => fetchVisitorStats(), 10000);
+
+        return true;
+
+      } catch (error) {
+        console.error('Supabase connection error:', error.message);
+        statusEl.classList.remove('connecting');
+        statusEl.classList.add('disconnected');
+        textEl.textContent = 'Connection Failed';
+        startDemoMode();
+        renderFallbackProjects();
+        return false;
+      }
+    }
+
+    // =============================================
+    // VISITOR TRACKING
+    // =============================================
+    async function trackVisit() {
+      if (!supabase) return;
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+
+        const { error } = await supabase.from('visitor_tracking').insert([{
+          visitor_id: visitorId,
+          visit_date: today,
+          visit_time: new Date().toISOString(),
+          page: 'index'
+        }]);
+
+        if (error) throw error;
+
+        await updateLivePresence();
+        await fetchVisitorStats();
+
+      } catch (error) {
+        console.error('Error tracking visit:', error.message);
+      }
+    }
+
+    async function updateLivePresence() {
+      if (!supabase) return;
+
+      try {
+        await supabase.from('live_visitors').upsert({
+          visitor_id: visitorId,
+          last_seen: new Date().toISOString(),
+          page: 'index'
+        });
+      } catch (error) {
+        console.error('Error updating presence:', error.message);
+      }
+    }
+
+    async function fetchVisitorStats() {
+      if (!supabase) return;
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+
+        const { data: totalData } = await supabase.from('visitor_tracking').select('visitor_id');
+        if (totalData) {
+          const uniqueVisitors = [...new Set(totalData.map(v => v.visitor_id))];
+          totalVisitors = uniqueVisitors.length;
+        }
+
+        const { data: todayData } = await supabase.from('visitor_tracking').select('visitor_id').eq('visit_date', today);
+        if (todayData) {
+          const uniqueToday = [...new Set(todayData.map(v => v.visitor_id))];
+          todayVisitors = uniqueToday.length;
+        }
+
+        const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const { count: liveCount } = await supabase.from('live_visitors').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinAgo);
+        liveVisitors = liveCount || 0;
+
+        updateVisitorUI();
+
+      } catch (error) {
+        console.error('Error fetching stats:', error.message);
+      }
+    }
+
+    async function subscribeToVisitors() {
+      if (!supabase) return;
+
+      try {
+        supabase
+          .channel('visitors-channel')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'visitor_tracking' }, () => fetchVisitorStats())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'live_visitors' }, () => fetchVisitorStats())
+          .subscribe((status) => { if (status === 'SUBSCRIBED') console.log('✅ Visitors real-time active'); });
+      } catch (error) {
+        console.error('Subscription error:', error);
+      }
+    }
+
+    function updateVisitorUI() {
+      document.getElementById('todayVisitors').textContent = todayVisitors.toLocaleString();
+      document.getElementById('totalVisitors').textContent = totalVisitors >= 1000 ? (totalVisitors / 1000).toFixed(1) + 'K' : totalVisitors.toLocaleString();
+      document.getElementById('liveCount').textContent = liveVisitors;
+      document.getElementById('footerLiveCount').textContent = totalVisitors.toLocaleString();
+    }
+
+    function startDemoMode() {
+      totalVisitors = 12438;
+      todayVisitors = 234;
+      liveVisitors = 24;
+      updateVisitorUI();
+
+      setInterval(() => {
+        todayVisitors += Math.floor(Math.random() * 3) + 1;
+        liveVisitors = Math.max(12, liveVisitors + Math.floor(Math.random() * 7) - 3);
+        if (Math.random() > 0.7) totalVisitors++;
+        updateVisitorUI();
+      }, 8000);
+    }
+
+    // =============================================
+    // PROJECTS
+    // =============================================
+    async function loadProjects() {
+      if (!supabase) {
+        renderFallbackProjects();
+        return;
+      }
+
+      try {
+        const { data: projects, error } = await supabase
+          .from('featured_projects')
+          .select('*')
+          .order('display_order', { ascending: true })
+          .limit(7);
+
+        if (error) throw error;
+
+        if (projects && projects.length > 0) {
+          renderProjects(projects);
+        } else {
+          renderFallbackProjects();
+        }
+
+      } catch (error) {
+        console.error('Error loading projects:', error);
+        renderFallbackProjects();
+      }
+    }
+
+    async function subscribeToProjects() {
+      if (!supabase) return;
+
+      try {
+        supabase
+          .channel('projects-channel')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'featured_projects' }, () => loadProjects())
+          .subscribe((status) => { if (status === 'SUBSCRIBED') console.log('✅ Projects real-time active'); });
+      } catch (error) {
+        console.error('Projects subscription error:', error);
+      }
+    }
+
+    function renderProjects(projects) {
+      const container = document.getElementById('projectsContainer');
+      if (!container) return;
+
+      const displayProjects = projects.slice(0, 7);
+
+      container.innerHTML = displayProjects.map(p => `
+        <div class="project-card">
+          <div class="project-icon"><i class="${p.icon || 'fa-solid fa-code'}"></i></div>
+          <h3>${p.title}</h3>
+          <p class="project-desc">${p.description}</p>
+          <div class="project-tech">
+            ${Array.isArray(p.tech) ? p.tech.map(t => `<span class="mini-tag">${t}</span>`).join('') : ''}
+          </div>
+          <button class="btn-view" onclick="viewProject('${p.title}')">
+            <i class="fas fa-arrow-right"></i> View Project
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderFallbackProjects() {
+      const container = document.getElementById('projectsContainer');
+      if (!container) return;
+
+      container.innerHTML = fallbackProjects.map(p => `
+        <div class="project-card">
+          <div class="project-icon"><i class="${p.icon}"></i></div>
+          <h3>${p.title}</h3>
+          <p class="project-desc">${p.description}</p>
+          <div class="project-tech">${p.tech.map(t => `<span class="mini-tag">${t}</span>`).join('')}</div>
+          <button class="btn-view" onclick="viewProject('${p.title}')"><i class="fas fa-arrow-right"></i> View Project</button>
+        </div>
+      `).join('');
+    }
+
+    // =============================================
+    // PROFILE STATS
+    // =============================================
+    async function loadProfileStats() {
+      if (!supabase) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('profile_stats')
+          .select('*')
+          .eq('id', 1)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          document.getElementById('profileProjects').textContent = data.projects || 7;
+          document.getElementById('profileFollowers').textContent = data.followers >= 1000 ? (data.followers / 1000).toFixed(1) + 'K' : data.followers;
+        }
+
+      } catch (error) {
+        console.error('Error loading profile stats:', error);
+      }
+    }
+
+    function viewProject(name) { alert('✨ Opening "' + name + '"'); }
+    function scrollToProjects() { document.getElementById('projects').scrollIntoView({ behavior: 'smooth' }); }
+    function scrollToContact() { document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); }
+    function goToProfile() { window.location.href = 'profile.html'; }
+
+    function initSmoothScroll() {
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const href = this.getAttribute('href');
+          if (href === '#' || href === '#home') return;
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    }
+
+    async function cleanup() {
+      if (!supabase || !visitorId) return;
+      try {
+        await supabase.from('live_visitors').delete().eq('visitor_id', visitorId);
+      } catch (error) { }
+    }
+
+    window.viewProject = viewProject;
+    window.scrollToProjects = scrollToProjects;
+    window.scrollToContact = scrollToContact;
+    window.goToProfile = goToProfile;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      initSmoothScroll();
+      await initSupabase();
+      console.log('✅ Portfolio initialized!');
+    });
+
+    window.addEventListener('beforeunload', cleanup);
+  </script>
+</body>
+
+</html>

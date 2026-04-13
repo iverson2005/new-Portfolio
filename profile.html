@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#f9f7f3">
+  <title>Revilla, Sean Benedict C. · Developer Profile</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase Client Module -->
+  <script src="js/supabase-client.js"></script>
+
+  <!-- AOS Animation -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ===== STYLES (Same as before) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2e2a28;
+      --secondary: #8b7355;
+      --accent: #c0392b;
+      --bg-light: #f9f7f3;
+      --bg-cream: #f0e6dd;
+      --shadow-color: #bba99b;
+      --text-dark: #2e2a28;
+      --text-light: #f3ede8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --purple: #8b5cf6;
+      --gold: #fbbf24;
+    }
+
+    body {
+      background: var(--bg-light);
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(230, 220, 210, 0.4) 0%, transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(199, 180, 167, 0.2) 0%, transparent 40%),
+        linear-gradient(145deg, #f4ede6 0%, #faf8f5 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-cream);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      border-radius: 10px;
+      border: 2px solid var(--bg-cream);
+    }
+
+    .drawing-border {
+      border: 2.8px solid #2c2a28;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      box-shadow: 8px 8px 0 var(--shadow-color);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .drawing-border:hover {
+      box-shadow: 12px 12px 0 var(--secondary);
+      transform: translate(-4px, -4px);
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0.8rem 2rem;
+      background: rgba(249, 247, 243, 0.95);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: var(--primary);
+      color: var(--text-light);
+      padding: 0.4rem 1.5rem;
+      border-radius: 40px 8px 40px 8px;
+      transform: rotate(-1deg);
+      box-shadow: 5px 5px 0 var(--accent);
+      text-decoration: none;
+      transition: all 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-logo:hover {
+      transform: rotate(0deg) translateY(-2px);
+      box-shadow: 8px 8px 0 var(--secondary);
+    }
+
+    .chat-pulse {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 12px;
+      height: 12px;
+      background: var(--success);
+      border: 2px solid white;
+      border-radius: 50%;
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.3);
+      }
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px 4px 20px 4px;
+      transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-cream);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .profile-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 6rem 2rem 3rem;
+    }
+
+    .profile-hero {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .profile-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-card-main {
+      background: linear-gradient(135deg, #fcf9f6 0%, #f5ede6 100%);
+      overflow: hidden;
+    }
+
+    .profile-cover-gradient {
+      height: 180px;
+      background: linear-gradient(135deg, var(--secondary), var(--accent), var(--purple), var(--info), var(--success));
+      background-size: 300% 300%;
+      animation: gradientFlow 15s ease infinite;
+    }
+
+    @keyframes gradientFlow {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    .profile-info-wrapper {
+      padding: 0 1.5rem 1.5rem;
+      margin-top: -50px;
+    }
+
+    .avatar-section {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+
+    .profile-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      border: 4px solid white;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      object-fit: cover;
+      animation: morphAvatar 8s ease-in-out infinite;
+    }
+
+    @keyframes morphAvatar {
+
+      0%,
+      100% {
+        border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      }
+
+      25% {
+        border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+      }
+
+      50% {
+        border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+      }
+
+      75% {
+        border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+      }
+    }
+
+    .online-indicator {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: var(--success);
+      border: 3px solid white;
+      border-radius: 50%;
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    .verified-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--info), var(--accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      border: 3px solid white;
+    }
+
+    .profile-title-section {
+      flex: 1;
+      padding-bottom: 0.5rem;
+    }
+
+    .name-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.3rem;
+    }
+
+    .profile-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .badge-container {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-pro {
+      background: linear-gradient(135deg, var(--gold), #ff9f43);
+      color: var(--primary);
+    }
+
+    .badge-top {
+      background: linear-gradient(135deg, var(--purple), #ec4899);
+      color: white;
+    }
+
+    .profile-headline {
+      font-size: 1rem;
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .location-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.8rem;
+      background: white;
+      border: 1.5px solid var(--shadow-color);
+      border-radius: 50px;
+      font-size: 0.8rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--shadow-color);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 var(--secondary);
+      border-color: var(--secondary);
+    }
+
+    .stat-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: #666;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-trend {
+      font-size: 0.65rem;
+      color: var(--success);
+      margin-top: 0.2rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn {
+      padding: 0.7rem 1.2rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 2px solid var(--primary);
+      border-radius: 12px 4px 20px 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 5px 5px 0 var(--accent);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #059669);
+      color: white;
+      box-shadow: 5px 5px 0 var(--accent);
+      flex: 1;
+    }
+
+    .btn:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 8px 8px 0 var(--accent);
+    }
+
+    .info-panel {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--primary);
+    }
+
+    .section-title i {
+      color: var(--accent);
+    }
+
+    .bio-text {
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--bg-cream), transparent);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+    }
+
+    .skill-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .skill-tag {
+      padding: 0.3rem 0.8rem;
+      background: white;
+      border: 1.5px solid var(--shadow-color);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .skills-section {
+      background: linear-gradient(135deg, #fcf9f6 0%, #f8f2ec 100%);
+      padding: 1.5rem;
+    }
+
+    .skills-radar-container {
+      height: 250px;
+      margin-bottom: 1.5rem;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--shadow-color);
+    }
+
+    .skills-categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .skills-categories {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .skill-category {
+      padding: 1rem;
+      background: white;
+      border-radius: 16px;
+      border: 2px solid var(--shadow-color);
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .category-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .category-name {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.9rem;
+    }
+
+    .skill-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .skill-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .skill-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    .skill-info {
+      flex: 1;
+    }
+
+    .skill-name-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.2rem;
+    }
+
+    .skill-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .skill-percent {
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .skill-bar {
+      height: 4px;
+      background: #e0d6cc;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .skill-progress {
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .cert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .cert-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem;
+      background: white;
+      border-radius: 14px;
+      border: 2px solid var(--shadow-color);
+    }
+
+    .cert-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+    }
+
+    .cert-info {
+      flex: 1;
+    }
+
+    .cert-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .cert-org {
+      font-size: 0.75rem;
+      color: var(--secondary);
+    }
+
+    .cert-date {
+      font-size: 0.65rem;
+      color: #999;
+      margin: 0.2rem 0;
+    }
+
+    .report-widget {
+      background: linear-gradient(135deg, #fcf9f6 0%, #f8f2ec 100%);
+      padding: 1.5rem;
+    }
+
+    .realtime-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 20px;
+      border: 1px solid var(--success);
+    }
+
+    .realtime-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    .realtime-text {
+      font-size: 0.75rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .report-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin: 1.2rem 0;
+    }
+
+    .report-stat-item {
+      text-align: center;
+    }
+
+    .report-stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .report-stat-label {
+      font-size: 0.65rem;
+      color: #666;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem;
+      background: white;
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-dark);
+      border: 1.5px solid var(--shadow-color);
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .contact-item i {
+      color: var(--accent);
+      width: 20px;
+    }
+
+    .chat-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      max-height: 500px;
+      z-index: 1000;
+      display: none;
+      background: white;
+    }
+
+    .chat-widget.open {
+      display: block;
+    }
+
+    @media (max-width: 480px) {
+      .chat-widget {
+        width: calc(100% - 40px);
+        right: 20px;
+      }
+    }
+
+    .chat-header {
+      padding: 1rem;
+      border-bottom: 2px dashed var(--secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 28px 10px 0 0;
+    }
+
+    .chat-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .chat-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0 5px;
+    }
+
+    .chat-close:hover {
+      color: var(--danger);
+    }
+
+    .online-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      color: var(--success);
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+
+    .chat-body {
+      height: 320px;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      background: var(--bg-light);
+    }
+
+    .message {
+      display: flex;
+      gap: 0.6rem;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .message-content {
+      background: white;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0 10px 10px 10px;
+      max-width: 220px;
+      border: 1.5px solid var(--shadow-color);
+    }
+
+    .message-name {
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+      color: var(--primary);
+    }
+
+    .message-text {
+      font-size: 0.8rem;
+      color: #444;
+    }
+
+    .message-time {
+      font-size: 0.6rem;
+      color: #999;
+      margin-top: 0.2rem;
+    }
+
+    .chat-footer {
+      padding: 0.8rem;
+      border-top: 2px solid var(--shadow-color);
+      display: flex;
+      gap: 0.5rem;
+      background: white;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.6rem 0.8rem;
+      background: var(--bg-light);
+      border: 2px solid var(--shadow-color);
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--secondary);
+    }
+
+    .chat-send {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: 2px solid var(--primary);
+      color: white;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--accent);
+    }
+
+    .chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 55px;
+      height: 55px;
+      border-radius: 20px 5px 20px 5px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: 3px solid var(--primary);
+      color: white;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow: 6px 6px 0 var(--accent);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    .message-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--danger);
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 20px;
+      border: 2px solid white;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 90%;
+      max-width: 450px;
+      padding: 1.5rem;
+      background: white;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px dashed var(--secondary);
+    }
+
+    .modal-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: var(--danger);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.7rem;
+      background: var(--bg-light);
+      border: 2px solid var(--shadow-color);
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--secondary);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      padding: 0.4rem 1rem;
+      background: white;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      border: 2px solid var(--primary);
+      box-shadow: 4px 4px 0 var(--shadow-color);
+      z-index: 998;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .connection-status.connected {
+      color: var(--success);
+    }
+
+    .connection-status.disconnected {
+      color: var(--danger);
+    }
+
+    .connection-status.connecting {
+      color: var(--warning);
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        padding: 5rem 1rem 1.5rem;
+      }
+
+      .nav-menu {
+        display: none;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .avatar-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .profile-name {
+        font-size: 1.8rem;
+      }
+
+      .name-wrapper {
+        justify-content: center;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .location-tags {
+        justify-content: center;
+      }
+
+      .connection-status {
+        bottom: 20px;
+        right: 90px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Connection Status -->
+  <div class="connection-status connecting" id="connectionStatus">
+    <i class="fas fa-circle"></i>
+    <span id="connectionText">Connecting...</span>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo" onclick="toggleChat()">
+        <i class="fas fa-globe"></i>
+        <span>draftfolio</span>
+        <span class="chat-pulse"></span>
+      </div>
+      <div class="nav-menu">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="index.html#projects" class="nav-link"><i class="fas fa-code-branch"></i> Projects</a>
+        <a href="profile.html" class="nav-link active"><i class="fas fa-user"></i> Profile</a>
+        <a href="#contact" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="profile-container">
+    <!-- Hero Section -->
+    <div class="profile-hero">
+      <div class="profile-card-main drawing-border" data-aos="fade-right">
+        <div class="profile-cover-gradient"></div>
+
+        <div class="profile-info-wrapper">
+          <div class="avatar-section">
+            <div class="avatar-wrapper">
+              <img
+                src="https://www.image2url.com/r2/default/images/1776069395379-b23b37e0-5072-402d-95cf-0c4a1097775f.jpg"
+                alt="Revilla, Sean Benedict C." class="profile-avatar">
+              <span class="online-indicator"></span>
+              <span class="verified-badge"><i class="fas fa-check"></i></span>
+            </div>
+
+            <div class="profile-title-section">
+              <div class="name-wrapper">
+                <h1 class="profile-name">Revilla, Sean Benedict C.</h1>
+                <div class="badge-container">
+                  <span class="badge badge-pro"><i class="fas fa-crown"></i> PRO</span>
+                  <span class="badge badge-top"><i class="fas fa-star"></i> Top 1%</span>
+                </div>
+              </div>
+              <div class="profile-headline">
+                <i class="fas fa-terminal" style="color: var(--accent);"></i>
+                Junior Web Developer 
+              </div>
+              <div class="location-tags">
+                <span class="tag"><i class="fas fa-map-pin"></i>Philippines, Tondo Manila</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card" onclick="showStats('followers')">
+              <div class="stat-value" id="followerCount">0</div>
+              <div class="stat-label">Followers</div>
+              <div class="stat-trend" id="followerTrend"><i class="fas fa-arrow-up"></i> +0</div>
+            </div>
+            <div class="stat-card" onclick="showStats('projects')">
+              <div class="stat-value">7</div>
+              <div class="stat-label">Projects</div>
+              <div class="stat-trend"><i class="fas fa-code"></i> 1 active</div>
+            </div>
+            <div class="stat-card" onclick="showStats('rating')">
+              <div class="stat-value">2.95</div>
+              <div class="stat-label">Rating</div>
+              <div class="stat-trend  "><i class="fas fa-star"></i> 2 ratings</div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary" id="followBtn" onclick="handleFollow()">
+              <i class="fas fa-user-plus"></i> <span>Follow</span>
+            </button>
+            <button class="btn btn-success" onclick="openReportModal()">
+              <i class="fas fa-bug"></i> Report Bug
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-panel drawing-border" data-aos="fade-left">
+        <div class="section-title"><i class="fas fa-user-astronaut"></i><span>About Me</span></div>
+        <p class="bio-text"><span class="highlight">Creative Junior Web Developer</span> eager to contribute to
+          innovative projects. With a strong foundation in software development and a creative mindset, I am ready to
+          help your company build reliable, engaging, and user-focused digital experiences.</p>
+
+        <div class="skill-cloud">
+          <span class="skill-tag">React</span><span class="skill-tag">TypeScript</span><span
+            class="skill-tag">Node.js</span><span class="skill-tag">Python</span>
+          <span class="skill-tag">Java</span><span class="skill-tag">PostgreSQL</span>
+          <span class="skill-tag">Supabase</span><span class="skill-tag">Firebase</span><span
+            class="skill-tag">MySQL</span><span class="skill-tag">PHP</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="skills-section drawing-border" data-aos="fade-up">
+        <div class="section-title"><i class="fas fa-chart-pie"></i><span>Technical Expertise</span></div>
+        <div class="skills-radar-container"><canvas id="skillsRadarChart"></canvas></div>
+
+        <div class="skills-categories">
+          <div class="skill-category">
+            <div class="category-header">
+              <div class="category-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);"><i
+                  class="fas fa-paint-brush"></i></div>
+              <span class="category-name">Frontend</span>
+            </div>
+            <div class="skill-items">
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #61dafb, #2b7489);"><i
+                    class="fab fa-react"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">React/Javascript</span><span
+                      class="skill-percent">96%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:96%;background:linear-gradient(90deg,#61dafb,#2b7489)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #3178C6, #00273F);"><i
+                    class="fab fa-js"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">TypeScript</span><span
+                      class="skill-percent">98%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:98%;background:linear-gradient(90deg,#3178c6,#f7df1e)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-category">
+            <div class="category-header">
+              <div class="category-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);"><i
+                  class="fas fa-server"></i></div>
+              <span class="category-name">Backend</span>
+            </div>
+            <div class="skill-items">
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #a40f0f, #5e0b0b);"><i
+                    class="fab fa-java"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">Java</span><span class="skill-percent">92%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:92%;background:linear-gradient(90deg,#eb1b04,#f29111)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #1884d7, #585751);"><i
+                    class="fab fa-python"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">Python</span><span
+                      class="skill-percent">89%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:89%;background:linear-gradient(90deg,#3776ab,#ffd43b)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #777bb4, #4f5b93);"><i
+                    class="fab fa-php"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">PHP</span><span class="skill-percent">84%</span>
+                  </div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:84%;background:linear-gradient(90deg,#777bb4,#4f5b93)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skill-category">
+            <div class="category-header">
+              <div class="category-icon" style="background: linear-gradient(135deg, #10b981, #047857);"><i
+                  class="fas fa-database"></i></div>
+              <span class="category-name">Database</span>
+            </div>
+            <div class="skill-items">
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #4479a1, #f29111);"><i
+                    class="fas fa-database"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">MySQL/PostgreSQL</span><span
+                      class="skill-percent">94%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:94%;background:linear-gradient(90deg,#4479a1,#f29111)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #ffca28, #ff6f00);"><i
+                    class="fas fa-fire"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">Firebase</span><span
+                      class="skill-percent">87%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:87%;background:linear-gradient(90deg,#ffca28,#ff6f00)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="skill-row">
+                <div class="skill-icon" style="background: linear-gradient(135deg, #3ecf8e, #1c7c54);"><i
+                    class="fas fa-bolt"></i></div>
+                <div class="skill-info">
+                  <div class="skill-name-row"><span class="skill-name">Supabase</span><span
+                      class="skill-percent">82%</span></div>
+                  <div class="skill-bar">
+                    <div class="skill-progress" style="width:82%;background:linear-gradient(90deg,#3ecf8e,#1c7c54)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    <div class="side-panel">
+      <div class="drawing-border" style="padding:1.5rem;background:linear-gradient(135deg,#fcf9f6 0%,#f8f2ec 100%)"
+        data-aos="fade-up">
+        <div class="section-title"><i class="fas fa-certificate"></i><span>Certifications</span></div>
+        <div class="cert-list">
+          <div class="cert-item">
+            <div class="cert-icon" style="background:linear-gradient(135deg,#28761a,#676f79)"><i
+                class="fa-solid fa-school"></i></div>
+            <div class="cert-info">
+              <div class="cert-name">COMPANY PROPOSAL AND SYSTEM SHOWCASE</div>
+              <div class="cert-org">Saint Jude College Manila</div>
+              <div class="cert-date"><i class="far fa-calendar"></i> 2023 - 2024</div>
+            </div>
+          </div>
+          <div class="cert-item">
+            <div class="cert-icon" style="background:linear-gradient(135deg,#28761a,#676f79)"><i
+                class="fa-solid fa-school"></i></div>
+            <div class="cert-info">
+              <div class="cert-name">Single Dimensional Theatre</div>
+              <div class="cert-org">Saint Jude College Manila</div>
+              <div class="cert-date"><i class="far fa-calendar"></i> 2024 - 2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-widget drawing-border" data-aos="fade-up">
+        <div class="section-title"><i class="fas fa-clipboard-list"></i><span>Bug Tracker</span></div>
+        <div class="realtime-indicator"><span class="realtime-dot"></span><span class="realtime-text">Live
+            Updates</span><span style="margin-left:auto;font-size:0.65rem;color:#666" id="lastUpdate">--:--:--</span>
+        </div>
+        <div class="report-stats">
+          <div class="report-stat-item">
+            <div class="report-stat-number" id="totalReports">0</div>
+            <div class="report-stat-label">Total</div>
+          </div>
+          <div class="report-stat-item">
+            <div class="report-stat-number" id="openReports" style="color:var(--warning)">0</div>
+            <div class="report-stat-label">Open</div>
+          </div>
+          <div class="report-stat-item">
+            <div class="report-stat-number" id="resolvedReports" style="color:var(--success)">0</div>
+            <div class="report-stat-label">Resolved</div>
+          </div>
+        </div>
+        <button class="btn btn-success" style="width:100%;justify-content:center" onclick="openReportModal()"><i
+            class="fas fa-bug"></i> Report an Issue</button>
+      </div>
+
+      <div class="drawing-border" style="padding:1.5rem;background:linear-gradient(135deg,#fcf9f6 0%,#f8f2ec 100%)"
+        data-aos="fade-up">
+        <div class="section-title"><i class="fas fa-address-card"></i><span>Contact</span></div>
+        <a href="mailto:alex.chen@example.com" class="contact-item"><i
+            class="fas fa-envelope"></i><span>reyiverson2005@gmail.com</span></a>
+        <a href="https://github.com/seanRevilla213" target="_blank" class="contact-item"><i
+            class="fab fa-github"></i><span>https://github.com/seanRevilla213</span></a>
+        <a href="https://linkedin.com/in/sean-benedict-revilla-b04169345/" target="_blank" class="contact-item"><i
+            class="fab fa-linkedin"></i><span>https://www.linkedin.com/in/sean-benedict-revilla-b04169345/</span></a>
+      </div>
+    </div>
+    </div>
+  </main>
+
+  <button class="chat-toggle" onclick="toggleChat()"><i class="fas fa-comments"></i><span class="message-badge"
+      id="messageBadge">0</span></button>
+
+  <div class="chat-widget drawing-border" id="chatWidget">
+    <div class="chat-header">
+      <div class="chat-title"><i class="fas fa-globe"></i><span>Global Chat</span></div>
+      <div style="display:flex;align-items:center">
+        <div class="online-badge"><i class="fas fa-circle" style="font-size:0.4rem"></i><span id="onlineCount">0
+            online</span></div>
+        <button class="chat-close" onclick="closeChat()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="chat-body" id="chatMessages"></div>
+    <div class="chat-footer">
+      <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..."
+        onkeypress="if(event.key==='Enter') sendMessage()">
+      <button class="chat-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="reportModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal drawing-border" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-bug" style="color:var(--warning)"></i> Report Issue</h3><button
+          class="modal-close" onclick="closeReportModal()">&times;</button>
+      </div>
+      <form id="reportForm" onsubmit="return false">
+        <div class="form-group"><label class="form-label">Issue Type</label><select class="form-control" id="issueType"
+            required>
+            <option value="">Select type...</option>
+            <option value="bug">🐛 Bug</option>
+            <option value="feature">✨ Feature Request</option>
+            <option value="ui">🎨 UI/UX Issue</option>
+            <option value="performance">⚡ Performance</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Title</label><input type="text" class="form-control"
+            id="issueTitle" placeholder="Brief description..." required></div>
+        <div class="form-group"><label class="form-label">Description</label><textarea class="form-control"
+            id="issueDescription" placeholder="Detailed description..." required></textarea></div>
+        <button type="submit" class="btn btn-success" style="width:100%" onclick="submitReport()"><i
+            class="fas fa-paper-plane"></i> Submit Report</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // ===== REAL-TIME PROFILE WITH SUPABASE CLIENT =====
+
+    let followerCount = 0;
+    let isFollowing = false;
+    let unreadMessages = 0;
+
+    // Initialize AOS
+    AOS.init({ duration: 800, once: true });
+
+    // Initialize Skills Chart
+    function initSkillsChart() {
+      const ctx = document.getElementById('skillsRadarChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Frontend', 'Backend', 'Database', 'Cloud', 'Architecture', 'DevOps'],
+          datasets: [{
+            data: [96, 92, 90, 88, 91, 85],
+            backgroundColor: 'rgba(192, 57, 43, 0.15)',
+            borderColor: '#c0392b',
+            borderWidth: 2,
+            pointBackgroundColor: '#8b7355',
+            pointBorderColor: '#fff',
+            pointRadius: 4
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20 }, grid: { color: '#e0d6cc' } } }, plugins: { legend: { display: false } } }
+      });
+    }
+
+    // Initialize Supabase and Real-Time Features
+    async function initializeRealtime() {
+      try {
+        await supabaseClient.initialize();
+
+        // Setup event listeners
+        setupSupabaseEventListeners();
+
+      } catch (error) {
+        console.error('Failed to initialize:', error);
+        updateConnectionStatus(false, 'Connection failed');
+      }
+    }
+
+    function setupSupabaseEventListeners() {
+      // Connection status
+      supabaseClient.on('connection-status', (data) => {
+        updateConnectionStatus(data.connected, data.message);
+      });
+
+      // Report stats
+      supabaseClient.on('report-stats', (stats) => {
+        document.getElementById('totalReports').textContent = stats.total;
+        document.getElementById('openReports').textContent = stats.open;
+        document.getElementById('resolvedReports').textContent = stats.resolved;
+        updateLastUpdateTime();
+      });
+
+      // Follower count
+      supabaseClient.on('follower-count', (count) => {
+        followerCount = count;
+        updateFollowerUI(count);
+      });
+
+      // Follow status
+      supabaseClient.on('follow-status', (following) => {
+        isFollowing = following;
+        updateFollowButton(following);
+      });
+
+      // Messages loaded
+      supabaseClient.on('messages-loaded', (messages) => {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = '';
+        messages.forEach(msg => appendMessageToContainer(msg));
+        container.scrollTop = container.scrollHeight;
+      });
+
+      // New message
+      supabaseClient.on('new-message', (message) => {
+        appendMessageToContainer(message);
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+
+        if (message.user_id !== supabaseClient.getUserId()) {
+          unreadMessages++;
+          document.getElementById('messageBadge').textContent = unreadMessages;
+        }
+      });
+
+      // Online count
+      supabaseClient.on('online-count', (count) => {
+        document.getElementById('onlineCount').textContent = `${count} online`;
+      });
+    }
+
+    function updateConnectionStatus(connected, message) {
+      const statusEl = document.getElementById('connectionStatus');
+      const textEl = document.getElementById('connectionText');
+      statusEl.classList.remove('connecting', 'connected', 'disconnected');
+      statusEl.classList.add(connected ? 'connected' : 'disconnected');
+      textEl.textContent = message;
+    }
+
+    function updateLastUpdateTime() {
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function updateFollowerUI(count) {
+      const el = document.getElementById('followerCount');
+      const trend = document.getElementById('followerTrend');
+      el.textContent = count >= 1000 ? (count / 1000).toFixed(1) + 'K' : count;
+      trend.innerHTML = `<i class="fas fa-arrow-up"></i> +${Math.floor(count * 0.02)}`;
+      el.style.transform = 'scale(1.2)';
+      setTimeout(() => el.style.transform = 'scale(1)', 200);
+    }
+
+    function updateFollowButton(following) {
+      const btn = document.getElementById('followBtn');
+      btn.innerHTML = following ? '<i class="fas fa-user-check"></i> <span>Following</span>' : '<i class="fas fa-user-plus"></i> <span>Follow</span>';
+      btn.style.background = following ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, var(--primary), var(--secondary))';
+    }
+
+    function appendMessageToContainer(msg) {
+      const container = document.getElementById('chatMessages');
+      const isOwn = msg.user_id === supabaseClient.getUserId();
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `
+        <div class="message-avatar">${msg.user_avatar || '?'}</div>
+        <div class="message-content">
+          <div class="message-name">${isOwn ? 'You' : (msg.user_name || 'User')}</div>
+          <div class="message-text">${escapeHtml(msg.message)}</div>
+          <div class="message-time">${formatTime(msg.created_at)}</div>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatTime(timestamp) {
+      if (!timestamp) return 'Just now';
+      const date = new Date(timestamp);
+      const now = new Date();
+      const diff = Math.floor((now - date) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return date.toLocaleDateString();
+    }
+
+    // UI Functions
+    async function handleFollow() {
+      const result = await supabaseClient.toggleFollow();
+      if (result.success) {
+        showNotification(result.following ? 'You are now following Revilla, Sean Benedict C.! 🎉' : 'You unfollowed Revilla, Sean Benedict C.', 'success');
+      } else {
+        showNotification('Failed to update follow status', 'error');
+      }
+    }
+
+    function showStats(type) {
+      const messages = { followers: `📊 ${followerCount.toLocaleString()} followers`, projects: '📁 7 projects (1 active)', rating: '⭐ 2.95 rating from reviewers' };
+      showNotification(messages[type] || 'Stats', 'info');
+    }
+
+    function toggleChat() {
+      const widget = document.getElementById('chatWidget');
+      widget.classList.toggle('open');
+      if (widget.classList.contains('open')) {
+        unreadMessages = 0;
+        document.getElementById('messageBadge').textContent = '0';
+        supabaseClient.updateOnlinePresence();
+      }
+    }
+
+    function closeChat() { document.getElementById('chatWidget').classList.remove('open'); }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (message) {
+        await supabaseClient.sendMessage(message);
+        input.value = '';
+      }
+    }
+
+    function openReportModal() { document.getElementById('reportModal').classList.add('open'); }
+    function closeReportModal() { document.getElementById('reportModal').classList.remove('open'); }
+    function closeModalOnOverlay(event) { if (event.target.classList.contains('modal-overlay')) closeReportModal(); }
+
+    async function submitReport() {
+      const type = document.getElementById('issueType').value;
+      const title = document.getElementById('issueTitle').value;
+      const description = document.getElementById('issueDescription').value;
+
+      if (!type || !title || !description) { showNotification('Please fill in all fields', 'error'); return; }
+
+      const result = await supabaseClient.submitReport({ type, title, description });
+      if (result.success) {
+        showNotification('✅ Report submitted successfully!', 'success');
+        closeReportModal();
+        document.getElementById('reportForm').reset();
+      } else {
+        showNotification('❌ Failed to submit report: ' + result.error, 'error');
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      const colors = { success: { bg: '#10b981', icon: 'check-circle' }, info: { bg: '#3b82f6', icon: 'info-circle' }, error: { bg: '#ef4444', icon: 'times-circle' } };
+      const color = colors[type] || colors.info;
+      const notification = document.createElement('div');
+      notification.style.cssText = `position:fixed;top:100px;right:20px;background:white;padding:1rem 1.5rem;border-left:4px solid ${color.bg};border-radius:12px;z-index:10000;display:flex;align-items:center;gap:12px;box-shadow:6px 6px 0 #bba99b;border:2px solid #2e2a28;animation:slideIn 0.3s ease;`;
+      notification.innerHTML = `<i class="fas fa-${color.icon}" style="color:${color.bg}"></i><span>${message}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#999;cursor:pointer">×</button>`;
+      document.body.appendChild(notification);
+      setTimeout(() => { notification.style.animation = 'slideOut 0.3s ease'; setTimeout(() => notification.remove(), 300); }, 3500);
+    }
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}`;
+    document.head.appendChild(style);
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+      initSkillsChart();
+      initializeRealtime();
+    });
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeReportModal(); closeChat(); } });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => { if (supabaseClient) supabaseClient.cleanup(); });
+  </script>
+</body>
+
+</html>
